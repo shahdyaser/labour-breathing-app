@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calm Breath — Labour & Endurance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>Calm Breath</h1>
+      <p class="subtitle">Labour & endurance breathing</p>
+    </header>
+
+    <main class="main">
+      <div class="breath-display">
+        <div class="phase-label" id="phaseLabel">Breathe with the circle</div>
+        <div class="count" id="count"></div>
+
+        <div class="circles-container" id="circlesContainer">
+          <div class="circle circle-1" id="circle1"></div>
+          <div class="circle circle-2" id="circle2"></div>
+          <div class="circle circle-3" id="circle3"></div>
+          <div class="circle circle-4" id="circle4"></div>
+          <div class="circle circle-5" id="circle5"></div>
+        </div>
+      </div>
+
+      <div class="tips">
+        <h2>How to breathe</h2>
+        <ul>
+          <li><strong>Inhale</strong> through your nose for 4 counts</li>
+          <li><strong>Exhale</strong> slowly through your mouth for 6 counts</li>
+          <li>Let your <strong>shoulders drop</strong> on the exhale</li>
+          <li>Keep your <strong>jaw loose</strong></li>
+          <li>Picture gently <strong>blowing out a candle</strong></li>
+        </ul>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="btn btn-primary" id="startBtn">Start</button>
+        <button type="button" class="btn btn-secondary" id="pauseBtn" disabled>Pause</button>
+        <button type="button" class="btn btn-ghost" id="stopBtn" disabled>Stop</button>
+      </div>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
