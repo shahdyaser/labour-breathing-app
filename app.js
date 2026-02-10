@@ -4,9 +4,7 @@
   const INHALE_DURATION_MS = 4000;
   const EXHALE_DURATION_MS = 6000;
 
-  const circleIds = ['circle1', 'circle2', 'circle3', 'circle4', 'circle5'];
-  const circles = circleIds.map((id) => document.getElementById(id));
-  const circlesContainer = document.getElementById('circlesContainer');
+  const flame = document.getElementById('flame');
   const phaseLabel = document.getElementById('phaseLabel');
   const countEl = document.getElementById('count');
   const startBtn = document.getElementById('startBtn');
@@ -20,26 +18,33 @@
   let pausedAt = 0;
   let totalPausedDuration = 0;
 
-  function getContainerSize() {
-    const rect = circlesContainer.getBoundingClientRect();
-    const size = Math.min(rect.width, rect.height);
-    return size / 2;
-  }
-
-  function setCircleSizes(radiusPerCircle) {
-    const baseRadius = getContainerSize();
-    circles.forEach((circle, i) => {
-      const radius = Array.isArray(radiusPerCircle) ? radiusPerCircle[i] : radiusPerCircle;
-      const r = (baseRadius * 0.28 * (i + 1)) * Math.max(0, radius);
-      const size = Math.round(r * 2);
-      circle.style.width = size + 'px';
-      circle.style.height = size + 'px';
-    });
-  }
-
   function getElapsed() {
     if (isPaused) return pausedAt - phaseStartTime - totalPausedDuration;
     return (performance.now() - phaseStartTime) - totalPausedDuration;
+  }
+
+  function setFlameState(phaseName, progress) {
+    const baseTransform = 'translateX(-50%)';
+    if (phaseName === 'inhale') {
+      flame.classList.remove('lit');
+      // Fire grows from small to fully lit over the 4-second inhale
+      const scale = Math.max(0, progress);
+      const opacity = Math.max(0, progress);
+      // Subtle flicker when nearly fully lit
+      const flicker = progress > 0.7 ? 1 + 0.04 * Math.sin(performance.now() / 40) : 1;
+      flame.style.opacity = String(opacity);
+      flame.style.transform = baseTransform + ' scale(' + (scale * flicker) + ')';
+    } else if (phaseName === 'exhale') {
+      flame.classList.remove('lit');
+      const scale = Math.max(0, 1 - progress);
+      const opacity = Math.max(0, 1 - progress);
+      flame.style.opacity = String(opacity);
+      flame.style.transform = baseTransform + ' scale(' + scale + ')';
+    } else {
+      flame.classList.remove('lit');
+      flame.style.opacity = '0';
+      flame.style.transform = baseTransform + ' scale(0)';
+    }
   }
 
   function updateCountAndPhase() {
@@ -52,7 +57,7 @@
     if (phase === 'inhale') {
       phaseLabel.textContent = 'Inhale through your nose';
     } else if (phase === 'exhale') {
-      phaseLabel.textContent = 'Exhale slowly — shoulders down, jaw loose';
+      phaseLabel.textContent = 'Exhale slowly — blow out the candle';
     }
   }
 
@@ -63,14 +68,7 @@
     const duration = phase === 'inhale' ? INHALE_DURATION_MS : EXHALE_DURATION_MS;
     const progress = Math.min(1, elapsed / duration);
 
-    const STAGGER = 0.08;
-    const radii = circles.map((_, i) => {
-      const delayed = (progress - i * STAGGER) / (1 - (circles.length - 1) * STAGGER);
-      const p = Math.max(0, Math.min(1, delayed));
-      return phase === 'inhale' ? p : 1 - p;
-    });
-
-    setCircleSizes(radii);
+    setFlameState(phase, progress);
     updateCountAndPhase();
 
     if (progress >= 1) {
@@ -124,8 +122,8 @@
     }
     phase = 'idle';
     isPaused = false;
-    setCircleSizes(0);
-    phaseLabel.textContent = 'Breathe with the circle';
+    setFlameState('idle');
+    phaseLabel.textContent = 'Breathe with the candle';
     countEl.textContent = '';
     startBtn.disabled = false;
     pauseBtn.disabled = true;
@@ -140,10 +138,5 @@
   });
   stopBtn.addEventListener('click', reset);
 
-  window.addEventListener('resize', function () {
-    if (phase !== 'idle') return;
-    setCircleSizes(0);
-  });
-
-  setCircleSizes(0);
+  setFlameState('idle');
 })();
